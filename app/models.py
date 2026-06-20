@@ -1,4 +1,4 @@
-from datetime import datetime as dt, timezone
+from datetime import datetime, timezone
 from enum import Enum
 
 from sqlalchemy import DateTime, Integer, String
@@ -19,21 +19,21 @@ class Booking(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     name: Mapped[str] = mapped_column(String(100), nullable=False)
-    datetime: Mapped[dt] = mapped_column(DateTime(timezone=True), nullable=False)
+    datetime: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
     service_type: Mapped[str] = mapped_column(String(100), nullable=False)
     status: Mapped[BookingStatus] = mapped_column(
         SqlEnum(BookingStatus, name="booking_status", native_enum=False),
         nullable=False,
         default=BookingStatus.pending,
     )
-    created_at: Mapped[dt] = mapped_column(
+    created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
-        default=lambda: dt.now(timezone.utc),
+        default=lambda: datetime.now(timezone.utc),
         nullable=False,
     )
-    updated_at: Mapped[dt] = mapped_column(
+    updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
-        default=lambda: dt.now(timezone.utc),
-        onupdate=lambda: dt.now(timezone.utc),
+        default=lambda: datetime.now(timezone.utc),
+        onupdate=lambda: datetime.now(timezone.utc),
         nullable=False,
     )

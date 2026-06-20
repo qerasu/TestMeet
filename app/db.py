@@ -1,7 +1,8 @@
 import os
+from collections.abc import Iterator
 
 from sqlalchemy import create_engine
-from sqlalchemy.orm import DeclarativeBase, sessionmaker
+from sqlalchemy.orm import DeclarativeBase, Session, sessionmaker
 from sqlalchemy.pool import StaticPool
 
 DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./bookings.db")
@@ -21,7 +22,7 @@ class Base(DeclarativeBase):
     pass
 
 
-def get_session():
+def get_session() -> Iterator[Session]:
     session = SessionLocal()
     try:
         yield session

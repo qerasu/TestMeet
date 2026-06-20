@@ -11,13 +11,13 @@ docker-compose up --build
 
 API будет доступно по адресу: `http://localhost:8000`
 
-Эндпоинты:
+### Тесты
 
-```text
-POST /bookings
-GET /bookings/{id}
-GET /bookings?status=pending&limit=20&offset=0
-DELETE /bookings/{id}
+```bash
+python3 -m venv .venv
+. .venv/bin/activate
+pip install -r requirements.txt
+python -m pytest
 ```
 
 ## Windows
@@ -40,21 +40,25 @@ pip install -r requirements.txt
 python -m pytest
 ```
 
+---
+
+Эндпоинты:
+
+```text
+POST /bookings
+GET /bookings/{id}
+GET /bookings?status=pending&limit=20&offset=0
+DELETE /bookings/{id}
+```
+
+---
+
 Пример создания брони:
 
 ```bash
 curl -X POST http://localhost:8000/bookings \
   -H "Content-Type: application/json" \
   -d '{"name":"Alice","datetime":"2026-06-21T10:00:00+00:00","service_type":"consultation"}'
-```
-
-### Тесты
-
-```bash
-python3 -m venv .venv
-. .venv/bin/activate
-pip install -r requirements.txt
-python -m pytest
 ```
 
 ## Технические решения

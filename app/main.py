@@ -1,4 +1,4 @@
-from datetime import datetime as dt
+from datetime import datetime
 
 from fastapi import Depends, FastAPI, HTTPException, Query, Response, status
 from pydantic import BaseModel, ConfigDict, Field
@@ -19,24 +19,24 @@ def root() -> dict[str, str]:
 
 class BookingCreate(BaseModel):
     name: str = Field(min_length=1, max_length=100)
-    datetime: dt
+    datetime: datetime
     service_type: str = Field(min_length=1, max_length=100)
 
 
 class BookingRead(BaseModel):
     id: int
     name: str
-    datetime: dt
+    datetime: datetime
     service_type: str
     status: BookingStatus
-    created_at: dt
-    updated_at: dt
+    created_at: datetime
+    updated_at: datetime
 
     model_config = ConfigDict(from_attributes=True)
 
 
 @app.post("/bookings", response_model=BookingRead, status_code=status.HTTP_201_CREATED)
-def create_booking(payload: BookingCreate, session: Session = Depends(get_session)):
+def create_booking(payload: BookingCreate, session: Session = Depends(get_session)) -> Booking:
     booking = Booking(**payload.model_dump(), status=BookingStatus.pending)
 
     session.add(booking)
@@ -48,7 +48,7 @@ def create_booking(payload: BookingCreate, session: Session = Depends(get_sessio
 
 
 @app.get("/bookings/{booking_id}", response_model=BookingRead)
-def get_booking(booking_id: int, session: Session = Depends(get_session)):
+def get_booking(booking_id: int, session: Session = Depends(get_session)) -> Booking:
     booking = session.get(Booking, booking_id)
 
     if booking is None:
@@ -63,7 +63,7 @@ def list_bookings(
     limit: int = Query(20, ge=1, le=100),
     offset: int = Query(0, ge=0),
     session: Session = Depends(get_session),
-):
+) -> list[Booking]:
     query = select(Booking).order_by(Booking.created_at.desc(), Booking.id.desc())
 
     if status_filter is not None:
@@ -73,7 +73,7 @@ def list_bookings(
 
 
 @app.delete("/bookings/{booking_id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_booking(booking_id: int, session: Session = Depends(get_session)):
+def delete_booking(booking_id: int, session: Session = Depends(get_session)) -> Response:
     booking = session.get(Booking, booking_id)
 
     if booking is None:

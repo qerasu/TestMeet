@@ -16,7 +16,7 @@ celery_app = Celery(
 logger = logging.getLogger(__name__)
 
 
-def send_mock_notification(booking):
+def send_mock_notification(booking: Booking) -> None:
     logger.info(
         "mock_notification_sent",
         extra={
@@ -28,7 +28,7 @@ def send_mock_notification(booking):
 
 
 @celery_app.task(name="app.tasks.process_booking")
-def process_booking(booking_id):
+def process_booking(booking_id: int) -> str | None:
     target_status = (
         BookingStatus.failed
         if random.random() < 0.15
@@ -51,6 +51,7 @@ def process_booking(booking_id):
 
         if target_status == BookingStatus.confirmed:
             booking = session.get(Booking, booking_id)
-            send_mock_notification(booking)
+            if booking is not None:
+                send_mock_notification(booking)
 
         return target_status.value
